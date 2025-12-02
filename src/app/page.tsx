@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Film, Loader2, AlertCircle, CheckCircle2, Plus, X } from 'lucide-react'
+import { Film, Loader2, AlertCircle, CheckCircle2, Plus, X, HelpCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import HelpModal from '@/components/HelpModal'
 
 interface JsonInput {
   id: string
@@ -18,6 +19,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('1')
   const [isLoading, setIsLoading] = useState(false)
   const [globalError, setGlobalError] = useState<string | null>(null)
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const router = useRouter()
 
   const validateJSON = (input: string): { valid: boolean; error: string | null } => {
@@ -140,7 +142,17 @@ export default function Home() {
 
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Get Started</h2>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-semibold">Get Started</h2>
+              <button
+                onClick={() => setIsHelpModalOpen(true)}
+                className="flex items-center justify-center w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-full transition-colors"
+                aria-label="How to get your data"
+                title="How to get your data"
+              >
+                <HelpCircle className="w-6 h-6" />
+              </button>
+            </div>
             <button
               onClick={addNewInput}
               disabled={isLoading}
@@ -264,6 +276,9 @@ export default function Home() {
           <p>Your data is processed anonymously and used only for comparative statistics.</p>
         </div>
       </div>
+
+      {/* Help Modal */}
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setIsHelpModalOpen(false)} />
     </main>
   )
 }

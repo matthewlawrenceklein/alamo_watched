@@ -21,7 +21,7 @@ export default function ShareCard({ analytics, comparativeStats }: ShareCardProp
       {/* Decorative shapes */}
       <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
       <div className="absolute bottom-20 left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-      
+
       {/* Content */}
       <div className="relative z-10">
         <div className="flex items-center gap-4 mb-8">
