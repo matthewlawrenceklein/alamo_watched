@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: alamo_watched_app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://alamo_user:alamo_pass@db:5432/alamo_watched
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npm run dev
+
+  db:
+    image: postgres:16-alpine
+    container_name: alamo_watched_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=alamo_user
+      - POSTGRES_PASSWORD=alamo_pass
+      - POSTGRES_DB=alamo_watched
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alamo_user -d alamo_watched"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

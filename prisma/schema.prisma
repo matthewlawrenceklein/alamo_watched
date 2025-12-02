@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  movieCount    Int
+  totalMinutes  Int
+  uniqueMovies  Int
+  topMarket     String?
+  topCinema     String?
+  analytics     Json
+  screenings    Screening[]
+
+  @@index([createdAt])
+}
+
+model Movie {
+  id            String   @id @default(cuid())
+  title         String
+  filmSlug      String   @unique
+  year          String?
+  runtimeMinutes Int?
+  rating        String?
+  director      String?
+  cast          String?
+  posterImage   String?
+  totalViews    Int      @default(0)
+  firstSeen     DateTime @default(now())
+  lastSeen      DateTime @updatedAt
+
+  @@index([totalViews])
+  @@index([filmSlug])
+  @@index([title])
+}
+
+model Screening {
+  id                    String   @id @default(cuid())
+  sessionId             String
+  marketName            String
+  cinemaName            String
+  sessionDateTimeUtc    DateTime
+  filmSlug              String
+  filmTitle             String
+  createdAt             DateTime @default(now())
+
+  session               Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([marketName])
+  @@index([cinemaName])
+  @@index([sessionDateTimeUtc])
+}
+
+model Analytics {
+  id                  String   @id @default(cuid())
+  date                DateTime @default(now())
+  totalSessions       Int      @default(0)
+  totalMoviesWatched  Int      @default(0)
+  uniqueMoviesWatched Int      @default(0)
+  avgMoviesPerSession Float    @default(0)
+  topMarkets          Json     @default("[]")
+  topCinemas          Json     @default("[]")
+
+  @@index([date])
+}
