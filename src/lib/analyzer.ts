@@ -112,8 +112,14 @@ function calculateMoviesByTimeOfDay(purchases: AlامoPurchase[]): TimeCount[] {
   }
 
   purchases.forEach(p => {
-    const date = new Date(p.sessionDateTimeClt || p.sessionDateTimeUtc)
-    const hour = date.getHours()
+    // Use sessionDateTimeClt (Cinema Local Time) which is already in local time
+    // If not available, fall back to UTC (though this shouldn't happen)
+    const dateString = p.sessionDateTimeClt || p.sessionDateTimeUtc
+    
+    // Parse the date string - it's in ISO format but represents local time
+    // We need to extract just the hour portion without timezone conversion
+    const timePart = dateString.split('T')[1] // Gets "HH:MM:SS" or "HH:MM:SS.sssZ"
+    const hour = parseInt(timePart.split(':')[0], 10)
 
     if (hour >= 5 && hour < 12) {
       timeCounts.morning++
