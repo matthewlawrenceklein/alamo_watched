@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Film, Clock, MapPin, Calendar, TrendingUp, Star, Award } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Film, Clock, MapPin, Calendar, TrendingUp, Star, Award, Share2, Download } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import html2canvas from 'html2canvas'
 import type { MovieAnalytics, ComparativeStats } from '@/types'
 import AnimatedShapes from './AnimatedShapes'
+import ShareCard from './ShareCard'
 
 interface ResultsCarouselProps {
   analytics: MovieAnalytics
@@ -14,12 +16,68 @@ interface ResultsCarouselProps {
 
 export default function ResultsCarousel({ analytics, comparativeStats }: ResultsCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isGenerating, setIsGenerating] = useState(false)
 
   // Check if user has any repeat viewings
   const hasRepeatViewings = analytics.topMovies.some(m => m.count > 1)
 
+  // Share functionality
+  const handleShare = async () => {
+    setIsGenerating(true)
+    try {
+      const shareCard = document.getElementById('share-card')
+      if (!shareCard) {
+        throw new Error('Share card not found')
+      }
+
+      const canvas = await html2canvas(shareCard, {
+        backgroundColor: null,
+        scale: 2,
+        logging: false,
+      })
+
+      // Try native share first (mobile)
+      if (navigator.share && navigator.canShare) {
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            try {
+              const file = new File([blob], 'alamo-wrapped-2025.png', { type: 'image/png' })
+              if (navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                  files: [file],
+                  title: 'My 2025 Alamo Wrapped',
+                  text: `I watched ${analytics.totalMovies} movies at Alamo Drafthouse in 2025!`,
+                })
+              } else {
+                downloadImage(canvas)
+              }
+            } catch (err) {
+              console.log('Share cancelled or failed:', err)
+              downloadImage(canvas)
+            }
+          }
+        })
+      } else {
+        // Fallback to download
+        downloadImage(canvas)
+      }
+    } catch (error) {
+      console.error('Error generating share image:', error)
+      alert('Failed to generate share image. Please try again.')
+    } finally {
+      setIsGenerating(false)
+    }
+  }
+
+  const downloadImage = (canvas: HTMLCanvasElement) => {
+    const link = document.createElement('a')
+    link.download = `alamo-wrapped-${new Date().getFullYear()}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
+  }
+
   // Build slides dynamically based on data
-  const slides = buildSlides(analytics, comparativeStats, hasRepeatViewings)
+  const slides = buildSlides(analytics, comparativeStats, hasRepeatViewings, handleShare, isGenerating)
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -164,6 +222,9 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
           {currentSlide + 1} / {slides.length}
         </div>
       </div>
+
+      {/* Hidden ShareCard for image generation */}
+      <ShareCard analytics={analytics} comparativeStats={comparativeStats} />
     </div>
   )
 }
@@ -171,7 +232,9 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
 function buildSlides(
   analytics: MovieAnalytics,
   comparativeStats: ComparativeStats,
-  hasRepeatViewings: boolean
+  hasRepeatViewings: boolean,
+  handleShare: () => Promise<void>,
+  isGenerating: boolean
 ) {
   const slides: JSX.Element[] = []
 
@@ -386,8 +449,27 @@ function buildSlides(
     <div className="text-center">
       <Film className="w-24 h-24 text-blue-600 mx-auto mb-6" />
       <h1 className="text-5xl font-bold text-gray-900 mb-4">That&apos;s a wrap!</h1>
-      <p className="text-2xl text-gray-600 mb-8">Thanks for being an Alamo Drafthouse fan</p>
+      <p className="text-2xl text-gray-600 mb-6">Thanks for being an Alamo Drafthouse fan</p>
       <p className="text-xl text-gray-500 mb-8">See you at the movies in 2026! 🎬</p>
+
+      {/* Share Button */}
+      <button
+        onClick={handleShare}
+        disabled={isGenerating}
+        className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed mb-8"
+      >
+        {isGenerating ? (
+          <>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            Generating...
+          </>
+        ) : (
+          <>
+            <Share2 className="w-5 h-5" />
+            Share Your Wrapped
+          </>
+        )}
+      </button>
 
       <div className="mt-8 pt-8 border-t border-gray-200">
         <p className="text-sm text-gray-500 mb-3">This is an open source project</p>
