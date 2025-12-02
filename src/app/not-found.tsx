@@ -11,7 +11,7 @@ export default function NotFound() {
           Session Not Found
         </h2>
         <p className="text-gray-600 mb-8 max-w-md mx-auto">
-          The analytics session you're looking for doesn't exist or has expired.
+          The analytics session you&apos;re looking for doesn&apos;t exist or has expired.
         </p>
         <Link
           href="/"

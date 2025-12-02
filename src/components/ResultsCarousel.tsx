@@ -16,7 +16,7 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
 
   // Check if user has any repeat viewings
   const hasRepeatViewings = analytics.topMovies.some(m => m.count > 1)
-  
+
   // Build slides dynamically based on data
   const slides = buildSlides(analytics, comparativeStats, hasRepeatViewings)
 
@@ -103,7 +103,7 @@ function buildSlides(
       <Film className="w-24 h-24 text-blue-600 mx-auto mb-6" />
       <h1 className="text-6xl font-bold text-gray-900 mb-4">Your 2025</h1>
       <h2 className="text-4xl font-bold text-blue-600 mb-4">Alamo Wrapped</h2>
-      <p className="text-xl text-gray-600">Let's see what you watched this year</p>
+      <p className="text-xl text-gray-600">Let&apos;s see what you watched this year</p>
     </div>
   )
 
@@ -122,7 +122,7 @@ function buildSlides(
   slides.push(
     <div className="text-center">
       <Clock className="w-20 h-20 text-purple-600 mx-auto mb-6" />
-      <h2 className="text-3xl font-semibold text-gray-700 mb-4">That's</h2>
+      <h2 className="text-3xl font-semibold text-gray-700 mb-4">That&apos;s</h2>
       <div className="text-8xl font-bold text-purple-600 mb-4">{analytics.totalHours}</div>
       <p className="text-3xl text-gray-700">hours of movies</p>
       <p className="text-xl text-gray-500 mt-4">{analytics.totalMinutes.toLocaleString()} minutes total</p>
@@ -163,16 +163,16 @@ function buildSlides(
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={analytics.moviesByMonth}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis 
-            dataKey="label" 
+          <XAxis
+            dataKey="label"
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <YAxis 
+          <YAxis
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <Tooltip 
+          <Tooltip
             contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
             labelStyle={{ color: '#111827', fontWeight: 600 }}
           />
@@ -190,16 +190,16 @@ function buildSlides(
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={analytics.moviesByDayOfWeek}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis 
-            dataKey="label" 
+          <XAxis
+            dataKey="label"
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <YAxis 
+          <YAxis
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <Tooltip 
+          <Tooltip
             contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
             labelStyle={{ color: '#111827', fontWeight: 600 }}
           />
@@ -217,16 +217,16 @@ function buildSlides(
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={analytics.moviesByTimeOfDay}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis 
-            dataKey="label" 
+          <XAxis
+            dataKey="label"
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <YAxis 
+          <YAxis
             tick={{ fill: '#6b7280', fontSize: 14 }}
             tickLine={{ stroke: '#9ca3af' }}
           />
-          <Tooltip 
+          <Tooltip
             contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
             labelStyle={{ color: '#111827', fontWeight: 600 }}
           />
@@ -307,7 +307,7 @@ function buildSlides(
   slides.push(
     <div className="text-center">
       <Film className="w-24 h-24 text-blue-600 mx-auto mb-6" />
-      <h1 className="text-5xl font-bold text-gray-900 mb-4">That's a wrap!</h1>
+      <h1 className="text-5xl font-bold text-gray-900 mb-4">That&apos;s a wrap!</h1>
       <p className="text-2xl text-gray-600 mb-8">Thanks for being an Alamo Drafthouse fan</p>
       <p className="text-xl text-gray-500">See you at the movies in 2026! 🎬</p>
     </div>

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import ResultsCarousel from '@/components/ResultsCarousel'
-import type { MovieAnalytics, ComparativeStats } from '@/types'
+import type { MovieAnalytics } from '@/types'
 
 interface PageProps {
   params: {
@@ -31,10 +31,10 @@ export default async function ResultsPage({ params }: PageProps) {
     orderBy: { movieCount: 'desc' },
   })
 
-  const rank = allSessionMovieCounts.findIndex(s => s.movieCount <= session.movieCount) + 1
+  const rank = allSessionMovieCounts.findIndex((s: { movieCount: number }) => s.movieCount <= session.movieCount) + 1
   const percentile = Math.round((rank / totalSessions) * 100)
   const averageMovies = Math.round(
-    allSessionMovieCounts.reduce((sum, s) => sum + s.movieCount, 0) / totalSessions
+    allSessionMovieCounts.reduce((sum: any, s: { movieCount: any }) => sum + s.movieCount, 0) / totalSessions
   )
   const moreMoviesThan = Math.round(((totalSessions - rank) / totalSessions) * 100)
 

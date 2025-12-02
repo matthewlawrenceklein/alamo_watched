@@ -152,7 +152,7 @@ export default function Home() {
           </div>
           
           <p className="text-gray-600 mb-6">
-            Paste your Alamo Drafthouse purchase history JSON data. If you have multiple pages, click "Add More Movies" for each pagination response.
+            Paste your Alamo Drafthouse purchase history JSON data. If you have multiple pages, click &quot;Add More Movies&quot; for each pagination response.
           </p>
 
           {/* Tabs */}
