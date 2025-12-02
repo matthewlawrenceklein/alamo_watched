@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Film, Clock, MapPin, Calendar, TrendingUp, Star, Award } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import type { MovieAnalytics, ComparativeStats } from '@/types'
+import AnimatedShapes from './AnimatedShapes'
 
 interface ResultsCarouselProps {
   analytics: MovieAnalytics
@@ -32,11 +33,86 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
     setCurrentSlide(index)
   }
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prevSlide()
+      } else if (e.key === 'ArrowRight') {
+        nextSlide()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [currentSlide, slides.length])
+
+  // Define color schemes for each slide
+  const colorSchemes = [
+    { from: 'from-blue-500', via: 'via-purple-500', to: 'to-pink-500' }, // Welcome
+    { from: 'from-indigo-500', via: 'via-blue-500', to: 'to-cyan-500' }, // Total Movies
+    { from: 'from-purple-500', via: 'via-pink-500', to: 'to-rose-500' }, // Hours
+    { from: 'from-green-500', via: 'via-emerald-500', to: 'to-teal-500' }, // Comparative
+    { from: 'from-red-500', via: 'via-orange-500', to: 'to-yellow-500' }, // Market
+    { from: 'from-blue-600', via: 'via-indigo-600', to: 'to-purple-600' }, // Month chart
+    { from: 'from-violet-500', via: 'via-purple-500', to: 'to-fuchsia-500' }, // Day chart
+    { from: 'from-orange-500', via: 'via-amber-500', to: 'to-yellow-500' }, // Time chart
+    { from: 'from-yellow-500', via: 'via-amber-500', to: 'to-orange-500' }, // Favorite
+    { from: 'from-blue-500', via: 'via-cyan-500', to: 'to-teal-500' }, // Top movies
+    { from: 'from-indigo-600', via: 'via-blue-600', to: 'to-cyan-600' }, // Directors
+    { from: 'from-pink-500', via: 'via-rose-500', to: 'to-red-500' }, // Thank you
+  ]
+
+  const currentColors = colorSchemes[currentSlide % colorSchemes.length]
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+      {/* Animated Background - No AnimatePresence to prevent white flash */}
+      <motion.div
+        className="absolute inset-0 -z-10"
+        animate={{
+          background: `linear-gradient(to bottom right, var(--tw-gradient-stops))`
+        }}
+      >
+        <motion.div
+          key={currentSlide}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className={`absolute inset-0 bg-gradient-to-br ${currentColors.from} ${currentColors.via} ${currentColors.to}`}
+        />
+
+        {/* Animated Geometric Shapes */}
+        <AnimatedShapes currentSlide={currentSlide} />
+
+        {/* Floating particles */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={`particle-${currentSlide}-${i}`}
+            initial={{
+              x: `${Math.random() * 100}%`,
+              y: `${Math.random() * 100}%`,
+              scale: 0,
+            }}
+            animate={{
+              y: [null, '-100px', '-200px'],
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: i * 0.3,
+              ease: "easeOut"
+            }}
+            className="absolute w-2 h-2 bg-white/40 rounded-full"
+          />
+        ))}
+      </motion.div>
+
+      <div className="w-full max-w-4xl relative z-10">
         {/* Main Carousel */}
-        <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden" style={{ minHeight: '600px' }}>
+        <div className="relative bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden" style={{ minHeight: '600px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
@@ -53,14 +129,14 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
           {/* Navigation Buttons */}
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white hover:scale-110 p-3 rounded-full shadow-xl transition-all backdrop-blur-sm"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-6 h-6 text-gray-700" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white hover:scale-110 p-3 rounded-full shadow-xl transition-all backdrop-blur-sm"
             aria-label="Next slide"
           >
             <ChevronRight className="w-6 h-6 text-gray-700" />
@@ -74,7 +150,9 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
               key={index}
               onClick={() => goToSlide(index)}
               className={`h-2 rounded-full transition-all ${
-                index === currentSlide ? 'w-8 bg-blue-600' : 'w-2 bg-gray-300'
+                index === currentSlide
+                  ? 'w-8 bg-white shadow-lg'
+                  : 'w-2 bg-white/40 hover:bg-white/60'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -82,7 +160,7 @@ export default function ResultsCarousel({ analytics, comparativeStats }: Results
         </div>
 
         {/* Slide Counter */}
-        <div className="text-center mt-4 text-gray-600">
+        <div className="text-center mt-4 text-white font-semibold text-lg drop-shadow-lg">
           {currentSlide + 1} / {slides.length}
         </div>
       </div>
