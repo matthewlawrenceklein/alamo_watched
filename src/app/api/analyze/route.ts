@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const purchases = body.data.purchaseHistory.purchases
-    
+
     if (purchases.length === 0) {
       return NextResponse.json(
         { error: 'No purchases found' },
