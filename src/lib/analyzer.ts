@@ -14,7 +14,12 @@ import type {
 } from '@/types'
 
 export function analyzePurchaseHistory(purchases: AlامoPurchase[]): MovieAnalytics {
-  const validPurchases = purchases.filter(p => !p.isRefunded)
+  // Filter for non-refunded purchases from 2025 only
+  const validPurchases = purchases.filter(p => {
+    if (p.isRefunded) return false
+    const purchaseDate = new Date(p.sessionDateTimeUtc)
+    return purchaseDate.getFullYear() === 2025
+  })
 
   const totalMovies = validPurchases.length
   const uniqueMovies = new Set(validPurchases.map(p => p.film.slug)).size

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import ResultsDashboard from '@/components/ResultsDashboard'
-import type { MovieAnalytics } from '@/types'
+import ResultsCarousel from '@/components/ResultsCarousel'
+import type { MovieAnalytics, ComparativeStats } from '@/types'
 
 interface PageProps {
   params: {
@@ -47,10 +47,9 @@ export default async function ResultsPage({ params }: PageProps) {
   }
 
   return (
-    <ResultsDashboard
+    <ResultsCarousel
       analytics={analytics}
       comparativeStats={comparativeStats}
-      sessionId={session.id}
     />
   )
 }
