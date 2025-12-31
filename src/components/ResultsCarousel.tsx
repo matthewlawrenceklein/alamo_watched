@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Film, Clock, MapPin, Calendar, TrendingUp, Star, Award, Share2, Download } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Film, Clock, MapPin, Calendar, TrendingUp, Star, Award, Share2, Download, Ticket } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import html2canvas from 'html2canvas'
 import type { MovieAnalytics, ComparativeStats } from '@/types'
@@ -422,23 +422,62 @@ function buildSlides(
 
   // Slide 11: Top Directors
   if (analytics.topDirectors.length > 0) {
-    slides.push(
-      <div className="w-full">
-        <Film className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Top Directors</h2>
-        <div className="space-y-3">
-          {analytics.topDirectors.slice(0, 5).map((director, index) => (
-            <div
-              key={director.director}
-              className="flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg"
-            >
-              <div className="flex items-center gap-4">
-                <div className="text-2xl font-bold text-indigo-600">#{index + 1}</div>
-                <div className="font-semibold text-lg text-gray-900">{director.director}</div>
+    const shouldShowDirectors = !(
+      analytics.topDirectors.length === 1 && analytics.topDirectors[0].director === 'Unknown'
+    ) && !(
+      analytics.topDirectors[0].director === 'Unknown'
+    )
+
+    if (shouldShowDirectors) {
+      slides.push(
+        <div className="w-full">
+          <Film className="w-16 h-16 text-indigo-600 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Your Top Directors</h2>
+          <div className="space-y-3">
+            {analytics.topDirectors.slice(0, 5).map((director, index) => (
+              <div
+                key={director.director}
+                className="flex items-center justify-between bg-gradient-to-r from-indigo-50 to-blue-50 p-4 rounded-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="text-2xl font-bold text-indigo-600">#{index + 1}</div>
+                  <div className="font-semibold text-lg text-gray-900">{director.director}</div>
+                </div>
+                <div className="text-xl font-bold text-blue-600">{director.count} films</div>
               </div>
-              <div className="text-xl font-bold text-blue-600">{director.count} films</div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+  }
+
+  // Slide 12: Season Pass Stats
+  if (analytics.seasonPassStats.totalTickets > 0) {
+    const stats = analytics.seasonPassStats
+    slides.push(
+      <div className="text-center">
+        <Ticket className="w-20 h-20 text-emerald-600 mx-auto mb-6" />
+        <h2 className="text-3xl font-semibold text-gray-700 mb-6">Your Ticket Breakdown</h2>
+        <div className="max-w-md mx-auto space-y-6">
+          <div>
+            <div className="text-6xl font-bold text-gray-900 mb-2">{stats.totalTickets}</div>
+            <p className="text-xl text-gray-600">Total Tickets</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl">
+              <div className="text-4xl font-bold text-emerald-600 mb-2">{stats.seasonPassTickets}</div>
+              <p className="text-sm text-gray-700 font-medium">Season Pass</p>
+              <p className="text-2xl text-emerald-700 font-bold mt-2">{stats.seasonPassPercentage}%</p>
             </div>
-          ))}
+            
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl">
+              <div className="text-4xl font-bold text-blue-600 mb-2">{stats.regularTickets}</div>
+              <p className="text-sm text-gray-700 font-medium">Regular</p>
+              <p className="text-2xl text-blue-700 font-bold mt-2">{stats.regularPercentage}%</p>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -449,7 +488,7 @@ function buildSlides(
     <div className="text-center">
       <Film className="w-24 h-24 text-blue-600 mx-auto mb-6" />
       <h1 className="text-5xl font-bold text-gray-900 mb-4">That&apos;s a wrap!</h1>
-      <p className="text-2xl text-gray-600 mb-6">Thanks for being an Alamo Drafthouse fan</p>
+      <p className="text-2xl text-gray-600 mb-6">I hope you took Alamo for a ride this year</p>
       <p className="text-xl text-gray-500 mb-8">See you at the movies in 2026! 🎬</p>
 
       {/* Share Button */}
@@ -472,6 +511,13 @@ function buildSlides(
       </button>
 
       <div className="mt-8 pt-8 border-t border-gray-200">
+        <a
+          href="/"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors mb-6"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Start Over
+        </a>
         <p className="text-sm text-gray-500 mb-3">This is an open source project</p>
         <a
           href="https://github.com/matthewlawrenceklein/alamo_watched"

@@ -11,6 +11,7 @@ import type {
   YearCount,
   DirectorCount,
   MovieDetails,
+  SeasonPassStats,
 } from '@/types'
 
 export function analyzePurchaseHistory(purchases: AlامoPurchase[]): MovieAnalytics {
@@ -36,6 +37,7 @@ export function analyzePurchaseHistory(purchases: AlامoPurchase[]): MovieAnaly
   const ratingDistribution = calculateRatingDistribution(validPurchases)
   const yearDistribution = calculateYearDistribution(validPurchases)
   const topDirectors = calculateTopDirectors(validPurchases)
+  const seasonPassStats = calculateSeasonPassStats(validPurchases)
 
   const favoriteMovie = findFavoriteMovie(validPurchases)
   const longestMovie = findLongestMovie(validPurchases)
@@ -61,6 +63,7 @@ export function analyzePurchaseHistory(purchases: AlامoPurchase[]): MovieAnaly
     longestMovie,
     oldestMovie,
     newestMovie,
+    seasonPassStats,
   }
 }
 
@@ -325,5 +328,34 @@ function findNewestMovie(purchases: AlامoPurchase[]): MovieDetails | undefined
     director: newest.film.director || 'Unknown',
     posterImage: newest.film.posterImage,
     viewCount: purchases.filter(p => p.film.slug === newest.film.slug).length,
+  }
+}
+
+function calculateSeasonPassStats(purchases: AlامoPurchase[]): SeasonPassStats {
+  let totalTickets = 0
+  let seasonPassTickets = 0
+
+  purchases.forEach(p => {
+    p.lineItems.forEach(item => {
+      if (item.isTicket) {
+        totalTickets += item.quantity
+        
+        if (item.name.includes('Season Pass') || p.isSubscriptionPurchase) {
+          seasonPassTickets += item.quantity
+        }
+      }
+    })
+  })
+
+  const regularTickets = totalTickets - seasonPassTickets
+  const seasonPassPercentage = totalTickets > 0 ? Math.round((seasonPassTickets / totalTickets) * 100) : 0
+  const regularPercentage = totalTickets > 0 ? Math.round((regularTickets / totalTickets) * 100) : 0
+
+  return {
+    totalTickets,
+    seasonPassTickets,
+    regularTickets,
+    seasonPassPercentage,
+    regularPercentage,
   }
 }

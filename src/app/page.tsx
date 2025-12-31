@@ -29,7 +29,7 @@ export default function Home() {
 
     try {
       const parsed = JSON.parse(input)
-      
+
       if (!parsed.data?.purchaseHistory?.purchases) {
         return { valid: false, error: 'Invalid format: Missing data.purchaseHistory.purchases' }
       }
@@ -71,9 +71,9 @@ export default function Home() {
 
   const removeInput = (id: string) => {
     if (jsonInputs.length === 1) return
-    
+
     setJsonInputs(prev => prev.filter(input => input.id !== id))
-    
+
     if (activeTab === id) {
       const remainingInputs = jsonInputs.filter(input => input.id !== id)
       setActiveTab(remainingInputs[0]?.id || '')
@@ -133,10 +133,10 @@ export default function Home() {
             <Film className="w-16 h-16 text-blue-600" />
           </div>
           <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Alamo Watched
+            Alamo Ticket Aggregator 2025
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover insights about your movie-watching habits at Alamo Drafthouse
+            Did you see a lot of movies? Get a good return on your pass? Let&apos;s find out!
           </p>
         </div>
 
@@ -162,7 +162,7 @@ export default function Home() {
               Add More Movies
             </button>
           </div>
-          
+
           <p className="text-gray-600 mb-6">
             Paste your Alamo Drafthouse purchase history JSON data. If you have multiple pages, click &quot;Add More Movies&quot; for each pagination response.
           </p>
@@ -199,7 +199,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-          
+
           {/* Active Input */}
           {activeInput && (
             <div className="mb-6">
@@ -266,7 +266,7 @@ export default function Home() {
                   Analyzing...
                 </>
               ) : (
-                'Analyze My Movies'
+                'Go!'
               )}
             </button>
           </div>

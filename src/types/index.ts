@@ -69,6 +69,7 @@ export interface MovieAnalytics {
   longestMovie?: MovieDetails
   oldestMovie?: MovieDetails
   newestMovie?: MovieDetails
+  seasonPassStats: SeasonPassStats
 }
 
 export interface MonthCount {
@@ -141,4 +142,12 @@ export interface ComparativeStats {
   totalUsers: number
   rank: number
   moreMoviesThan: number
+}
+
+export interface SeasonPassStats {
+  totalTickets: number
+  seasonPassTickets: number
+  regularTickets: number
+  seasonPassPercentage: number
+  regularPercentage: number
 }

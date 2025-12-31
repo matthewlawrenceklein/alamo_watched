@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      platforms:
+        - linux/arm64
+    container_name: alamo_watched_prod
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://alamo_user:CHANGE_THIS_PASSWORD@db:5432/alamo_watched
+      - NEXT_PUBLIC_APP_URL=https://alamo.yourdomain.com
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - alamo_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: alamo_watched_db_prod
+    environment:
+      - POSTGRES_USER=alamo_user
+      - POSTGRES_PASSWORD=CHANGE_THIS_PASSWORD
+      - POSTGRES_DB=alamo_watched
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alamo_user -d alamo_watched"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - alamo_network
+
+volumes:
+  postgres_prod_data:
+    driver: local
+
+networks:
+  alamo_network:
+    driver: bridge
