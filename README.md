@@ -2,10 +2,6 @@
 
 A web application for analyzing and visualizing your Alamo Drafthouse movie-watching history.
 
-## Overview
-
-Alamo Watched allows users to paste their Alamo Drafthouse viewing data in JSON format and receive detailed analytics and visualizations about their movie-watching habits, including comparative statistics against other users.
-
 ## Tech Stack
 
 - **Framework**: Next.js 14+ (App Router)
@@ -15,7 +11,6 @@ Alamo Watched allows users to paste their Alamo Drafthouse viewing data in JSON 
 - **Visualization**: Recharts + Framer Motion
 - **Styling**: TailwindCSS + shadcn/ui
 - **Containerization**: Docker + Docker Compose
-- **Deployment**: Self-hosted + Cloudflare Tunnel
 
 ## Development Setup
 
@@ -23,8 +18,6 @@ Alamo Watched allows users to paste their Alamo Drafthouse viewing data in JSON 
 
 - Docker
 - Docker Compose
-
-**No local Node.js or npm installation required!**
 
 ### Getting Started
 
@@ -76,56 +69,9 @@ alamo_watched/
 └── decision-log.md
 ```
 
-## Features
-
-### Current Features
-- [x] JSON input form with validation
-- [x] Movie data parsing and analysis
-- [x] Interactive data visualizations
-- [x] Comparative analytics (percentile rankings)
-- [x] Session-based tracking
-- [x] Anonymous usage statistics
-- [x] Real-time JSON validation
-- [x] Animated dashboard with charts
-- [x] Top movies and directors analysis
-- [x] Market and cinema distribution
-- [x] Time-based viewing patterns
-
-### Planned Features
-- [ ] Export results as image/PDF
-- [ ] Year-over-year comparisons
-- [ ] Social sharing capabilities
-- [ ] Advanced filtering and sorting
-- [ ] User accounts (optional)
-
-## Database Schema
-
-### Tables
-- **sessions**: Anonymous user session tracking
-- **movies**: Aggregated movie viewing data
-- **user_analytics**: Computed metrics per session
-
-## Deployment
-
-### Production Build
-
-```bash
-docker build -f Dockerfile.prod -t alamo-watched:latest .
-docker run -p 3000:3000 alamo-watched:latest
-```
-
-### Cloudflare Tunnel Setup
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment instructions including:
-- Production Docker configuration
-- Cloudflare Tunnel setup
-- Environment variables
-- Database migrations
-- Monitoring and backups
-
 ## Contributing
 
-This is a personal project, but suggestions and feedback are welcome.
+PRs & Issues welcome :D
 
 ## License
 
